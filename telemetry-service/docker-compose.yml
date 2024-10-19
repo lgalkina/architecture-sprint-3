@@ -30,21 +30,10 @@ services:
       - zookeeper
     restart: on-failure
 
-  device-db:
-    image: postgres:13.4
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=device_db
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    restart: always
-
   telemetry-db:
     image: postgres:13.4
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
