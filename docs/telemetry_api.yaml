@@ -3,7 +3,7 @@ info:
   title: Telemetry Management API
   version: 1.0.0
 paths:
-  /devices/{device_id}/telemetries:
+  /devices/{device_id}/telemetry:
     get:
       summary: Получение телеметрии устройства
       parameters:
@@ -22,7 +22,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/TelemetryData'
 
-  /devices/{device_id}/telemetries/latest:
+  /devices/{device_id}/telemetry/latest:
     get:
       summary: Получение последней телеметрии устройства
       parameters:

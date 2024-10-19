@@ -1,5 +1,5 @@
-docker build . -t ghcr.io/lygalkina/device-service:latest
+docker build . -t ghcr.io/lgalkina/device-service:latest
 
-echo access-token | docker login ghcr.io -u lygalkina --password-stdin
+echo access-token | docker login ghcr.io -u lgalkina --password-stdin
 
-docker push ghcr.io/lygalkina/device-service:latest
+docker push ghcr.io/lgalkina/device-service:latest

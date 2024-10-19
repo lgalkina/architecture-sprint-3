@@ -1,5 +1,5 @@
-docker build . -t ghcr.io/lygalkina/telemetry-service:latest
+docker build . -t ghcr.io/lgalkina/telemetry-service:latest
 
-echo access-token | docker login ghcr.io -u lygalkina --password-stdin
+echo access-token | docker login ghcr.io -u lgalkina --password-stdin
 
-docker push ghcr.io/lygalkina/telemetry-service:latest
+docker push ghcr.io/lgalkina/telemetry-service:latest

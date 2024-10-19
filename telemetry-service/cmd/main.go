@@ -15,8 +15,8 @@ func main() {
 	defer controller.Stop()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/devices/{device_id}/telemetries", controller.GetDeviceTelemetry).Methods("GET")
-	r.HandleFunc(" /devices/{device_id}/telemetries/latest", controller.GetLatestDeviceTelemetry).Methods("GET")
+	r.HandleFunc("/devices/{device_id}/telemetry", controller.GetDeviceTelemetry).Methods("GET")
+	r.HandleFunc(" /devices/{device_id}/telemetry/latest", controller.GetLatestDeviceTelemetry).Methods("GET")
 
 	log.Println("Starting server on :8082")
 	log.Fatal(http.ListenAndServe(":8082", r))
