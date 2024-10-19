@@ -1,0 +1,37 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "Пользователь Smart Home System")
+System_Boundary(system, "Система Умный дом") {
+    Container(apiGateway, "АPI Gateway", "Kusk", "Маршрутизация запросов, мониторинг, логирование, аутентификация и авторизация")
+
+    Container(heating_control, "Heating Control Service", "Java and Spring MVC", "Управляет отоплением")
+    Container(sensor_management, "Sensor Management Service (Telemetry)", "Java and Spring MVC", "Управляет датчиками температуры")
+    Container(user_management, "User Service", "Java and Spring MVC", "Управление пользователями")
+
+    ContainerDb(heating_control_db, "Database", "PostgreSQL")
+    ContainerDb(sensor_management_db, "Database", "PostgreSQL")
+    ContainerDb(user_db, "Database", "PostgreSQL")
+    ContainerQueue(kafka, "Databus", "Kafka")
+
+    Rel(apiGateway, heating_control, "Отправляет команды для управления отоплением", "REST API, JSON/HTPPS")
+    Rel(apiGateway, sensor_management, "Запрашивает данные о температуре в помещении: последняя, за период", "REST API, JSON/HTPPS")
+    Rel(apiGateway, user_management, "Запрашивает/обновляет данные о пользователе", "REST API, JSON/HTPPS")
+
+    Rel(heating_control, kafka, "Отправляет команды")
+    Rel_L(kafka, sensor_management, "Отправляет данные")
+
+    Rel(heating_control, heating_control_db, "Чтение / запись [SQL]")
+    Rel(sensor_management, sensor_management_db, "Чтение / запись [SQL]")
+    Rel(user_management, user_db, "Чтение / запись [SQL]")
+}
+
+System_Ext(heating_system, "Heating system", "Система отопления")
+System_Ext(temperature_sensor, "Temperature sensor", "Датчик температуры")
+
+Rel(kafka, heating_system, "Отправляет команды для управления отоплением", "REST API, JSON/HTPPS")
+Rel(temperature_sensor, kafka, "Запрашивает данные о температуре в помещении", "REST API, JSON/HTPPS")
+Rel(user, apiGateway, "Использует для управления отоплением")
+
+@enduml

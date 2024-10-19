@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "Пользователь Smart Home System")
+
+System_Boundary(smart_home_system, "Система управления отоплением") {
+    Container(control_server, "Smart Home System", "Java and Spring MVC", "Обрабатывает команды управления отоплением и взаимодействует с датчиками температуры")
+}
+
+System_Ext(heating_system, "Heating system", "Система отопления")
+System_Ext(temperature_sensor, "Temperature sensor", "Датчик температуры")
+
+Rel(user, control_server, "Использует для управления отоплением")
+Rel(control_server, heating_system, "Отправляет команды для управления отоплением")
+Rel(control_server, temperature_sensor, "Запрашивает данные о температуре в помещении")
+
+@enduml

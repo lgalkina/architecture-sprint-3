@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: Device Management API
+  version: 1.0.0
+paths:
+  /devices/{device_id}:
+    get:
+      summary: Получение информации об устройстве
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Устройство не найдено
+        '500':
+          description: Ошибка сервера
+
+  /devices/{device_id}/status:
+    put:
+      summary: Обновление состояния устройства
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceStatus'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceStatus'
+        '400':
+          description: Неверный запрос
+        '404':
+          description: Устройство не найдено
+        '500':
+          description: Ошибка сервера
+
+  /devices/{device_id}/commands:
+    post:
+      summary: Отправка команды устройству
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCommand'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCommandResponse'
+        '400':
+          description: Неверный запрос
+        '404':
+          description: Устройство не найдено
+        '500':
+          description: Ошибка сервера
+
+components:
+  schemas:
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+        type_id:
+          type: string
+        house_id:
+          type: string
+        serial_number:
+          type: string
+        status:
+          type: string
+        current_telemetry_data:
+          $ref: '#/components/schemas/TelemetryData'
+
+    DeviceStatus:
+      type: object
+      properties:
+        status:
+          type: string
+
+    DeviceCommand:
+      type: object
+      properties:
+        command:
+          type: string
+        value:
+          type: number
+
+    DeviceCommandResponse:
+      type: object
+      properties:
+        command:
+          type: string
+        value:
+          type: number
+        status:
+          type: string
+
+    TelemetryData:
+      type: object
+      properties:
+        temperature:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
