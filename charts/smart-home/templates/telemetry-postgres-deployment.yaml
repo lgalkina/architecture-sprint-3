@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: telemetryPostgres
+  name: telemetry-postgres
 spec:
   selector:
     matchLabels:
-      app: telemetryPostgres
+      app: telemetry-postgres
   replicas: 1
   template:
     metadata:
       labels:
-        app: telemetryPostgres
+        app: telemetry-postgres
     spec:
       containers:
-        - name: telemetryPostgres
+        - name: telemetry-postgres
           image: {{ .Values.devicePostgres.image }}
           ports:
             - containerPort: {{ .Values.devicePostgres.port }}

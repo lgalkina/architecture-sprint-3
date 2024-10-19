@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"telemetry-service/internal/domains/entities"
 	"telemetry-service/internal/domains/repository"
 )

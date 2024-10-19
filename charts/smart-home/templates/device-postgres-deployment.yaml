@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devicePostgres
+  name: device-postgres
 spec:
   selector:
     matchLabels:
-      app: devicePostgres
+      app: device-postgres
   replicas: 1
   template:
     metadata:
       labels:
-        app: devicePostgres
+        app: device-postgres
     spec:
       containers:
-        - name: devicePostgres
+        - name: device-postgres
           image: {{ .Values.devicePostgres.image }}
           ports:
             - containerPort: {{ .Values.devicePostgres.port }}

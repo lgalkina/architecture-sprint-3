@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"device-service/internal/domains/entities"
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 const (
