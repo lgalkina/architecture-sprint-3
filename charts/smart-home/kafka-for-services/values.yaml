@@ -1,0 +1,13 @@
+zookeeper:
+  image: "wurstmeister/zookeeper:latest"
+  port: 2181
+
+kafka:
+  image: "wurstmeister/kafka:latest"
+  port: 9092
+  advertisedListeners: "INSIDE://kafka:9092"
+  listeners: "INSIDE://0.0.0.0:9092"
+  listenerSecurityProtocolMap: "INSIDE:PLAINTEXT"
+  listenerName: "INSIDE"
+  interBrokerListenerName: "INSIDE"
+  zookeeperConnect: "zookeeper:2181"

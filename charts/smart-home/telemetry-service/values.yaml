@@ -1,0 +1,50 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/lgalkina/telemetry-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+telemetryPostgres:
+  image: "postgres:latest"
+  database: "device_db"
+  username: "postgres"
+  password: "postgres"
+  port: 5433
+
+telemetryService:
+  image: "ghcr.io/lgalkina/telemetry-service:latest"
+  port: 8080
+  postgresUrl: "postgres://postgres:postgres@telemetry-service-postgresql:5432/telemetry_db?sslmode=disable"
+  kafkaServers: "kafka:9092"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: telemetry-service.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  {}
+
+imagePullSecrets:
+  - name: ghcr-secret
+
+serviceAccount:
+  create: false
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80

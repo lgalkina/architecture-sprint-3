@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Telemetry Management API
+  version: 1.0.0
+
+x-kusk:
+  upstream:
+    service:
+      name: telemetry-service
+      namespace: default
+      port: 8080
+
+paths:
+  /devices/{device_id}/telemetry:
+    get:
+      summary: Получение телеметрии устройства
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelemetryData'
+
+  /devices/{device_id}/telemetry/latest:
+    get:
+      summary: Получение последней телеметрии устройства
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryData'
+
+components:
+  schemas:
+    TelemetryData:
+      type: object
+      properties:
+        id:
+          type: string
+        device_id:
+          type: string
+        temperature:
+          type: number
