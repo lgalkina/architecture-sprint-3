@@ -8,7 +8,7 @@ x-kusk:
     service:
       name: telemetry-service
       namespace: default
-      port: 8082
+      port: 8080
 
 paths:
   /devices/{device_id}/telemetry:

@@ -16,7 +16,7 @@ spec:
         - name: telemetry-service
           image: telemetry-service:latest
           ports:
-            - containerPort: 8082
+            - containerPort: 8080
           env:
             - name: TELEMETRY_POSTGRES_URL
               value: {{ .Values.telemetryService.postgresUrl }}

@@ -14,7 +14,7 @@ telemetryPostgres:
 
 telemetryService:
   image: "ghcr.io/lgalkina/telemetry-service:latest"
-  port: 8082
+  port: 8080
   postgresUrl: "postgres://postgres:postgres@telemetry-service-postgresql:5432/telemetry_db?sslmode=disable"
   kafkaServers: "kafka:9092"
 
