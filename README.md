@@ -144,16 +144,18 @@ minikube delete
     - [context.puml](./diagrams/context.puml) 
     - [container.puml](./diagrams/container.puml) 
     - [component.puml](./diagrams/component.puml) 
-    - [code_classes.puml](./diagrams/code_classes.puml) - вариант для heating controller
+    - [code_classes.puml](./diagrams/code_classes.puml) - вариант для device controller
 2. ER:
     - [er.puml](./diagrams/er.puml)
 
 ## Документация
 
-Для взаимодействия с "Heating Control Service" (Управление устройствами) будет использоваться REST, 
+Для взаимодействия с "Device Service" (Управление устройствами) будет использоваться REST, 
 API задокументировано с помощью OpenAPI: [device_api.yaml](./docs/device_api.yaml)
 
-Для взаимодействия с "Sensor Management Service" (Телеметрия) будет использоваться kafka,
-API задокументировано с помощью AsyncAPI: [telemetry_api.yaml](./docs/telemetry_api.yaml)
+Для взаимодействия с "Telemetry Service" (Телеметрия) будет использоваться REST,
+API задокументировано с помощью OpenAPI: [telemetry_api.yaml](./docs/telemetry_api.yaml)
+
+Для асинхронных взаимодействий через kafka API задокументировано с помощью AsyncAPI: [async_api.yaml](./docs/async_api.yaml)
 
 

@@ -6,16 +6,12 @@ entity User {
     +email: String
     +phone: String
     +password: String
-    +void register()
-    +void login()
-    +void update(...)
 }
 
 entity House {
     +id: Long
     +user_id: Long
     +address: String
-    +Device[] get_devices()
 }
 
 entity Device {
@@ -24,13 +20,6 @@ entity Device {
     +house_id: Long
     +serial_number: String
     +status: String
-    +String get_status()
-    +String set_status()
-    +TelemetryData get_current_telemetry_data()
-    +void set_current_telemetry_data()
-    +TelemetryData[] get_telemetry_by_period()
-    +DeviceType get_device_type()
-    +Module[] get_modules()
 }
 
 entity DeviceType {
@@ -49,10 +38,6 @@ entity TelemetryData {
     +device_id: Long
     +Integer: temperature
     +timestamp: DateTime
-    +void get_data()
-    +void set_data()
-    +Integer get_temperature()
-    +void set_temperature()
 }
 
 User ||--o{ House : has

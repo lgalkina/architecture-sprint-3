@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telemetry-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telemetry-service
+  template:
+    metadata:
+      labels:
+        app: telemetry-service
+    spec:
+      containers:
+        - name: telemetry-service
+          image: telemetry-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: TELEMETRY_POSTGRES_URL
+              value: {{ .Values.telemetryService.postgresUrl }}
+            - name: KAFKA_SERVERS
+              value: {{ .Values.telemetryService.kafkaServers }}

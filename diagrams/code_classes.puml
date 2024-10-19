@@ -2,9 +2,9 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
 package ru.yandex.practicum.smarthome.service {
-    interface HeatingSystemService {
-        +HeatingSystemDto getHeatingSystem(Long id)
-        +HeatingSystemDto updateHeatingSystem(Long id, HeatingSystemDto heatingSystemDto)
+    interface DeviceSystemService {
+        +DeviceSystemDto getDeviceSystem(Long id)
+        +DeviceSystemDto updateDeviceSystem(Long id, DeviceSystemDto DeviceSystemDto)
         +void turnOn(Long id)
         +void turnOff(Long id)
         +void setTargetTemperature(Long id, double temperature)
@@ -13,7 +13,7 @@ package ru.yandex.practicum.smarthome.service {
 }
 
 package ru.yandex.practicum.smarthome.dto {
-    class HeatingSystemDto {
+    class DeviceSystemDto {
         +Long id
         +String name
         +double targetTemperature
@@ -23,7 +23,7 @@ package ru.yandex.practicum.smarthome.dto {
 }
 
 package ru.yandex.practicum.smarthome.entity {
-    class HeatingSystem {
+    class DeviceSystem {
         +Long id
         +String name
         +double targetTemperature
@@ -33,12 +33,12 @@ package ru.yandex.practicum.smarthome.entity {
 }
 
 package ru.yandex.practicum.smarthome.controller {
-    class HeatingController {
-        -HeatingSystemService heatingSystemService
-        -HeatingStorageManager heatingStorageManager
-        +HeatingController(HeatingSystemService heatingSystemService, HeatingStorageManager heatingStorageManager)
-        +HeatingSystemDto getHeatingSystem(Long id)
-        +HeatingSystemDto updateHeatingSystem(Long id, HeatingSystemDto heatingSystemDto)
+    class DeviceController {
+        -DeviceSystemService DeviceSystemService
+        -DeviceStorageManager DeviceStorageManager
+        +DeviceController(DeviceSystemService DeviceSystemService, DeviceStorageManager DeviceStorageManager)
+        +DeviceSystemDto getDeviceSystem(Long id)
+        +DeviceSystemDto updateDeviceSystem(Long id, DeviceSystemDto DeviceSystemDto)
         +void turnOn(Long id)
         +void turnOff(Long id)
         +void setTargetTemperature(Long id, double temperature)
@@ -47,27 +47,27 @@ package ru.yandex.practicum.smarthome.controller {
 }
 
 package ru.yandex.practicum.smarthome.storage {
-    class HeatingStorageManager {
-        -HeatingSystemRepository heatingSystemRepository
-        +HeatingStorageManager(HeatingSystemRepository heatingSystemRepository)
-        +HeatingSystem save(HeatingSystem heatingSystem)
-        +HeatingSystem findById(Long id)
+    class DeviceStorageManager {
+        -DeviceSystemRepository DeviceSystemRepository
+        +DeviceStorageManager(DeviceSystemRepository DeviceSystemRepository)
+        +DeviceSystem save(DeviceSystem DeviceSystem)
+        +DeviceSystem findById(Long id)
         +void deleteById(Long id)
     }
 }
 
 package ru.yandex.practicum.smarthome.repository {
-    interface HeatingSystemRepository {
-        +HeatingSystem save(HeatingSystem heatingSystem)
-        +HeatingSystem findById(Long id)
+    interface DeviceSystemRepository {
+        +DeviceSystem save(DeviceSystem DeviceSystem)
+        +DeviceSystem findById(Long id)
         +void deleteById(Long id)
     }
 }
 
-HeatingController --> HeatingSystemService : uses
-HeatingController --> HeatingStorageManager : uses
-HeatingStorageManager --> HeatingSystemRepository : uses
-HeatingSystemService --> HeatingSystemDto : returns
-HeatingSystemService --> HeatingSystem : uses
+DeviceController --> DeviceSystemService : uses
+DeviceController --> DeviceStorageManager : uses
+DeviceStorageManager --> DeviceSystemRepository : uses
+DeviceSystemService --> DeviceSystemDto : returns
+DeviceSystemService --> DeviceSystem : uses
 
 @enduml
