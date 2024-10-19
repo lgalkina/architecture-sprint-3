@@ -9,7 +9,7 @@ RUN set -Eeux && \
 
 RUN GOOS=linux GOARCH=amd64 \
     go build \
-    -o telemetry-service cmd/telemetry-service/main.go
+    -o telemetry-service cmd/main.go
 
 FROM scratch
 WORKDIR /root/

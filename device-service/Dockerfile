@@ -9,7 +9,7 @@ RUN set -Eeux && \
 
 RUN GOOS=linux GOARCH=amd64 \
     go build \
-    -o device-service cmd/device-service/main.go
+    -o device-service cmd/main.go
 
 FROM scratch
 WORKDIR /root/
