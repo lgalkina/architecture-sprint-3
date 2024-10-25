@@ -1,8 +1,8 @@
 package entities
 
 type TelemetryData struct {
-	ID          string  `json:"id"`
-	DeviceID    string  `json:"device_id"`
+	ID          int64   `json:"id"`
+	DeviceID    int64   `json:"device_id"`
 	Temperature float64 `json:"temperature"`
 	Timestamp   string  `json:"timestamp"`
 }

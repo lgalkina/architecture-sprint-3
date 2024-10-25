@@ -12,49 +12,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	connection = "user=dev dbname=device sslmode=disable password="
-)
-
-const (
-	createTablesScript = `
-		CREATE TABLE houses (
-			id SERIAL PRIMARY KEY,
-			user_id BIGINT NOT NULL,
-			address VARCHAR(255) NOT NULL
-		);
-		
-		CREATE TABLE devices (
-			id SERIAL PRIMARY KEY,
-			type_id BIGINT NOT NULL,
-			house_id BIGINT NOT NULL,
-			serial_number VARCHAR(255) NOT NULL,
-			status VARCHAR(255) NOT NULL,
-			FOREIGN KEY (house_id) REFERENCES houses(id)
-		);
-		
-		CREATE TABLE device_types (
-			id SERIAL PRIMARY KEY,
-			name VARCHAR(255) NOT NULL
-		);
-		
-		CREATE TABLE modules (
-			id SERIAL PRIMARY KEY,
-			device_id BIGINT NOT NULL,
-			name VARCHAR(255) NOT NULL,
-			FOREIGN KEY (device_id) REFERENCES devices(id)
-		);
-		
-		CREATE TABLE telemetry_data (
-			id SERIAL PRIMARY KEY,
-			device_id BIGINT NOT NULL,
-			data TEXT NOT NULL,
-			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY (device_id) REFERENCES devices(id)
-		);
-	`
-)
-
 type repoDevice struct {
 	db *sql.DB
 }
@@ -68,13 +25,9 @@ func NewDeviceRepository() IDeviceRepository {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully connected to the database")
-	instance := &repoDevice{
+	return &repoDevice{
 		db: db,
 	}
-	if err := instance.init(); err != nil {
-		log.Fatal(err)
-	}
-	return instance
 }
 
 func (r *repoDevice) GetDeviceInfo(id string) (*entities.Device, error) {
@@ -136,9 +89,4 @@ func (r *repoDevice) UpdateDeviceStatus(id string, status string) error {
 		return NewDeviceNotFoundError(id)
 	}
 	return nil
-}
-
-func (r *repoDevice) init() error {
-	_, err := r.db.Exec(createTablesScript)
-	return err
 }

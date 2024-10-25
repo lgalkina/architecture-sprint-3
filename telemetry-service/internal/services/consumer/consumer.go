@@ -3,10 +3,10 @@ package consumer
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/IBM/sarama"
 	"telemetry-service/internal/domains/entities"
@@ -14,24 +14,21 @@ import (
 )
 
 const (
-	group = "telemetry-consumer-group"
-	topic = "telemetry-topic"
+	group = "telemetry_consumer_group"
+	topic = "telemetry"
 )
 
 type consumer struct {
 	consumerGroup sarama.ConsumerGroup
 	telemetryRepo repository.ITelemetryRepository
-	ready         chan bool
-	messages      chan *sarama.ConsumerMessage
 }
 
 func NewConsumer() IConsumerService {
-	// Set up Kafka consumer configuration
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Version = sarama.V2_6_0_0
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 
-	// Create a new consumer group
 	cg, err := sarama.NewConsumerGroup(buildConnectionStr(), group, config)
 	if err != nil {
 		log.Fatalf("Error creating consumer group: %v", err)
@@ -40,8 +37,6 @@ func NewConsumer() IConsumerService {
 	c := &consumer{
 		consumerGroup: cg,
 		telemetryRepo: repository.NewTelemetryRepository(),
-		ready:         make(chan bool),
-		messages:      make(chan *sarama.ConsumerMessage),
 	}
 	go c.consume()
 
@@ -50,41 +45,50 @@ func NewConsumer() IConsumerService {
 
 func (c *consumer) Close() {
 	if err := c.consumerGroup.Close(); err != nil {
-		log.Println("Error closing consumer: %v", err)
+		log.Printf("Error closing consumer: %v\n", err)
 	}
 }
 
 func (c *consumer) consume() {
-	<-c.ready
 	ctx := context.Background()
-	// Consume messages from the Kafka topic
-	for {
-		if err := c.consumerGroup.Consume(ctx, []string{topic}, c); err != nil {
-			log.Fatalf("Error consuming messages: %v", err)
-		}
+	sConsumer := saramaConsumer{
+		ready:    make(chan bool),
+		messages: make(chan *sarama.ConsumerMessage),
+	}
 
-		// Process messages
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for {
+			if err := c.consumerGroup.Consume(ctx, []string{topic}, &sConsumer); err != nil {
+				log.Fatalf("Error consuming messages: %v", err)
+			}
+			if ctx.Err() != nil {
+				return
+			}
+			sConsumer.ready = make(chan bool)
+		}
+	}()
+
+	<-sConsumer.ready
+	for {
 		select {
 		case <-ctx.Done():
 			return
-		case msg := <-c.messages:
+		case msg := <-sConsumer.messages:
 			c.processMessage(msg)
 		}
 	}
 }
 
-// processMessage processes a single Kafka message
 func (c *consumer) processMessage(msg *sarama.ConsumerMessage) {
-	// Deserialize the message into a TelemetryData struct
-	var telemetryData *entities.TelemetryData
+	telemetryData := &entities.TelemetryData{}
 	err := json.Unmarshal(msg.Value, telemetryData)
 	if err != nil {
 		log.Printf("Error unmarshalling message: %v", err)
 		return
 	}
-
-	// Process the telemetry data
-	fmt.Printf("Received telemetry data: %+v\n", telemetryData)
 
 	if err := c.telemetryRepo.SaveDeviceTelemetry(telemetryData); err != nil {
 		log.Printf("Error saving telemetry: %v", err)
@@ -92,23 +96,30 @@ func (c *consumer) processMessage(msg *sarama.ConsumerMessage) {
 	}
 }
 
-func (c *consumer) Setup(sarama.ConsumerGroupSession) error {
-	close(c.ready)
-	return nil
+func buildConnectionStr() []string {
+	return strings.Split(os.Getenv("KAFKA_SERVERS"), ",")
 }
 
-func (c *consumer) Cleanup(sarama.ConsumerGroupSession) error {
-	return nil
+// Consumer represents a Sarama consumer group consumer
+type saramaConsumer struct {
+	ready    chan bool
+	messages chan *sarama.ConsumerMessage
 }
 
-func (c *consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+func (c *saramaConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
+		log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 		c.messages <- message
 		session.MarkMessage(message, "")
 	}
 	return nil
 }
 
-func buildConnectionStr() []string {
-	return strings.Split(os.Getenv("KAFKA_SERVERS"), ",")
+func (c *saramaConsumer) Setup(sarama.ConsumerGroupSession) error {
+	close(c.ready)
+	return nil
+}
+
+func (c *saramaConsumer) Cleanup(sarama.ConsumerGroupSession) error {
+	return nil
 }

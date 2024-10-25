@@ -16,7 +16,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/devices/{device_id}/telemetry", controller.GetDeviceTelemetry).Methods("GET")
-	r.HandleFunc(" /devices/{device_id}/telemetry/latest", controller.GetLatestDeviceTelemetry).Methods("GET")
+	r.HandleFunc("/devices/{device_id}/telemetry/latest", controller.GetLatestDeviceTelemetry).Methods("GET")
 
 	log.Println("Starting server on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))

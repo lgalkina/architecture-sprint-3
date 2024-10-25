@@ -1,6 +1,0 @@
-CREATE TABLE telemetries (
-    id SERIAL PRIMARY KEY,
-    device_id VARCHAR(255) NOT NULL,
-    temperature DOUBLE PRECISION NOT NULL,
-    timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);

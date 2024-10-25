@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	topic = "device-commands"
+	topic = "commands"
 )
 
 type producer struct {

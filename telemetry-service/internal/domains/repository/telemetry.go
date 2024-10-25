@@ -13,15 +13,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	createTableScript = `CREATE TABLE telemetries (
-		id SERIAL PRIMARY KEY,
-		device_id VARCHAR(255) NOT NULL,
-		temperature DOUBLE PRECISION NOT NULL,
-		timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-	);`
-)
-
 // singleton instance of the repository
 var (
 	instance *repoTelemetry
@@ -45,15 +36,12 @@ func NewTelemetryRepository() ITelemetryRepository {
 		instance = &repoTelemetry{
 			db: db,
 		}
-		if err := instance.init(); err != nil {
-			log.Fatal(err)
-		}
 	})
 	return instance
 }
 
 func (t *repoTelemetry) GetDeviceTelemetry(id string) ([]entities.TelemetryData, error) {
-	query := "SELECT device_id, temperature, timestamp FROM telemetries WHERE device_id=$1 ORDER BY timestamp DESC"
+	query := "SELECT id, device_id, temperature, timestamp FROM telemetries WHERE device_id=$1 ORDER BY timestamp DESC"
 	rows, err := t.db.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -63,7 +51,7 @@ func (t *repoTelemetry) GetDeviceTelemetry(id string) ([]entities.TelemetryData,
 	var telemetries []entities.TelemetryData
 	for rows.Next() {
 		var td entities.TelemetryData
-		err = rows.Scan(&td.DeviceID, &td.Temperature, &td.Timestamp)
+		err = rows.Scan(&td.ID, &td.DeviceID, &td.Temperature, &td.Timestamp)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +64,7 @@ func (t *repoTelemetry) GetDeviceTelemetry(id string) ([]entities.TelemetryData,
 func (t *repoTelemetry) GetLatestDeviceTelemetry(id string) (*entities.TelemetryData, error) {
 	query := "SELECT id, device_id, temperature, timestamp FROM telemetries WHERE device_id=$1 ORDER BY timestamp DESC LIMIT 1"
 	var td entities.TelemetryData
-	err := t.db.QueryRow(query, id).Scan(&td.DeviceID, &td.Temperature, &td.Timestamp)
+	err := t.db.QueryRow(query, id).Scan(&td.ID, &td.DeviceID, &td.Temperature, &td.Timestamp)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, NewDeviceTelemetryNotFoundError(id)
@@ -88,16 +76,11 @@ func (t *repoTelemetry) GetLatestDeviceTelemetry(id string) (*entities.Telemetry
 }
 
 func (t *repoTelemetry) SaveDeviceTelemetry(data *entities.TelemetryData) error {
-	query := "INSERT INTO telemetries (device_id, temperature, timestamp) VALUES ($1, $2, $3, $4)"
+	query := "INSERT INTO telemetries (device_id, temperature, timestamp) VALUES ($1, $2, $3)"
 	_, err := t.db.Exec(query, data.DeviceID, data.Temperature, data.Timestamp)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (t *repoTelemetry) init() error {
-	_, err := t.db.Exec(createTableScript)
-	return err
 }
