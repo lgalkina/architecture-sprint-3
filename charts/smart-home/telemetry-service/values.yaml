@@ -7,7 +7,7 @@ image:
 
 telemetryPostgres:
   image: "postgres:latest"
-  database: "device_db"
+  database: "telemetry_db"
   username: "postgres"
   password: "postgres"
   port: 5433

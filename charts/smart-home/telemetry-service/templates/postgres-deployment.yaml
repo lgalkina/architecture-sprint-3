@@ -14,13 +14,13 @@ spec:
     spec:
       containers:
         - name: telemetry-postgres
-          image: {{ .Values.devicePostgres.image }}
+          image: {{ .Values.telemetryPostgres.image }}
           ports:
-            - containerPort: {{ .Values.devicePostgres.port }}
+            - containerPort: {{ .Values.telemetryPostgres.port }}
           env:
             - name: POSTGRES_DB
-              value: {{ .Values.devicePostgres.database }}
+              value: {{ .Values.telemetryPostgres.database }}
             - name: POSTGRES_USER
-              value: {{ .Values.devicePostgres.username }}
+              value: {{ .Values.telemetryPostgres.username }}
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.devicePostgres.password }}
+              value: {{ .Values.telemetryPostgres.password }}
