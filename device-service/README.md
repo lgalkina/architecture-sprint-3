@@ -1,6 +1,8 @@
-# Device Service 
+# Device Service
 
 ## Как запустить локально с docker
+
+Запуск осуществляется отдельно от сервиса telemetry-service
 
 Запускаем PostgreSQL и Kafka
 

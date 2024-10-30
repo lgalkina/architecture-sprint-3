@@ -2,6 +2,8 @@
 
 ## Как запустить локально с docker
 
+Запуск осуществляется отдельно от сервиса device-service
+
 Запускаем PostgreSQL и Kafka
 
 ```shell
