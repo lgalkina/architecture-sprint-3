@@ -51,3 +51,7 @@ curl -X GET "http://localhost:8080/devices/1/telemetry/latest" -H "Accept: appli
 ```
 "{\"device_id\": 1, \"temperature\": 14.5, \"timestamp\": \"2023-10-01T12:00:00Z\"}"        
 ```
+
+## Как запустить c minikube и terraform
+
+Запуск с terraform пока не работает - таймауты при выполнении `terraform apply`

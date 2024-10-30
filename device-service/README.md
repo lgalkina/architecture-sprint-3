@@ -56,3 +56,7 @@ curl -X POST "http://localhost:8080/devices/1/commands" -H "Content-Type: applic
     "value": 0
 }'
 ```
+
+## Как запустить c minikube и terraform
+
+Запуск с terraform пока не работает - таймауты при выполнении `terraform apply`
