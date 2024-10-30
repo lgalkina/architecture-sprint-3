@@ -1,7 +1,7 @@
 services:
 
   zookeeper:
-    image: docker-hub.artifactory.s.o3.ru/zookeeper:3.7.1
+    image: zookeeper:3.7.1
     ports:
       - "2181:2181"
     environment:
@@ -9,7 +9,7 @@ services:
     restart: on-failure
 
   kafka:
-    image: docker-hub.artifactory.s.o3.ru/bitnami/kafka:3.4.1
+    image: bitnami/kafka:3.4.1
     ports:
       - "9092:9092"
     environment:
