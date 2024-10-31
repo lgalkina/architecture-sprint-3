@@ -1,0 +1,56 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "Пользователь Smart Home System")
+System_Boundary(system, "Система Умный дом") {
+    Container(apiGateway, "АPI Gateway", "Kusk", "Маршрутизация запросов, мониторинг, логирование, аутентификация и авторизация")
+
+    Container(device_control, "Device Service", "Java and Spring MVC", "Управляет устройствами отопления") {
+        Component(device_controller, "Device Controller", "Управление отоплением")
+        Component(device_command_producer, "Device Command Producer", "Отправка команд")
+        Component(device_storage_manager, "Device Data Storage Manager", "Сохранение данных")
+        Rel(device_controller, device_command_producer, "")
+        Rel(device_controller, device_storage_manager, "")
+    }
+
+    Container(telemetry_management, "Telemetry Service", "Java and Spring MVC", "Управляет датчиками температуры") {
+        Component(telemetry_controller, "Telemetry Controller", "Управление датчиками")
+        Component(telemetry_storage_manager, "Telemetry Data Storage Manager", "Сохранение данных")
+        Component(telemetry_data_consumer, "Telemetry Data Consumer", "Сбор данных с датчиков [kafka]")
+        Rel(telemetry_controller, telemetry_storage_manager, "")
+        Rel(telemetry_data_consumer, telemetry_storage_manager, "")
+    }
+
+    Container(user_management, "User Service", "Java and Spring MVC", "Управление пользователями") {
+        Component(user_controller, "User Management Controller", "Обработка запросов на управление пользователями")
+        Component(user_storage_manager, "User Data Storage Manager", "Сохранение данных")
+        Rel(user_controller, user_storage_manager, "")
+    }
+
+    ContainerDb(device_control_db, "Database", "PostgreSQL")
+    ContainerDb(telemetry_management_db, "Database", "PostgreSQL")
+    ContainerDb(user_db, "Database", "PostgreSQL")
+    ContainerQueue(kafka, "Databus", "Kafka")
+
+    Rel(apiGateway, device_control, "Отправляет команды для управления отоплением", "REST API, JSON/HTPPS")
+    Rel(apiGateway, telemetry_management, "Запрашивает данные о температуре в помещении: последняя, за период", "REST API, JSON/HTPPS")
+    Rel(apiGateway, user_management, "Запрашивает/обновляет данные о пользователе", "REST API, JSON/HTPPS")
+
+    Rel(device_command_producer, kafka, "Отправляет команды")
+    Rel_L(kafka, telemetry_data_consumer, "Отправляет данные")
+
+    Rel(device_command_producer, device_control_db, "Чтение / запись [SQL]")
+    Rel(telemetry_storage_manager, telemetry_management_db, "Чтение / запись [SQL]")
+    Rel(user_storage_manager, user_db, "Чтение / запись [SQL]")
+}
+
+System_Ext(heating_system_device, "Heating system device", "Устройство системы отопления")
+System_Ext(temperature_sensor, "Temperature sensor", "Датчик температуры")
+
+Rel(kafka, heating_system_device, "Отправляет команды для управления отоплением", "REST API, JSON/HTPPS")
+Rel(temperature_sensor, kafka, "Запрашивает данные о температуре в помещении", "REST API, JSON/HTPPS")
+Rel(user, apiGateway, "Использует для управления отоплением")
+
+@enduml

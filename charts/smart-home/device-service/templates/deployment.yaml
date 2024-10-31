@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: device-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: device-service
+  template:
+    metadata:
+      labels:
+        app: device-service
+    spec:
+      containers:
+        - name: device-service
+          image: device-service:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DEVICE_POSTGRES_URL
+              value: {{ .Values.deviceService.postgresUrl }}
+            - name: KAFKA_SERVERS
+              value: {{ .Values.deviceService.kafkaServers }}

@@ -1,0 +1,45 @@
+asyncapi: 2.0.0
+info:
+  title: Telemetry API
+  version: 1.0.0
+servers:
+  kafka:
+    url: kafka://localhost:9092
+    protocol: kafka
+channels:
+  telemetry:
+    description: Канал для отправки данных телеметрии
+    publish:
+      summary: Данные телеметрии
+      operationId: telemetryData
+      message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+            temperature:
+              type: integer
+            timestamp:
+              type: string
+              format: date-time
+
+  commands:
+    description: Канал для отправки команд на изменение температуры и получения текущих данных телеметрии
+    publish:
+      summary: Отправка команды на изменение температуры
+      operationId: sendTemperatureCommand
+      message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+            command:
+              type: string
+              enum: [set_temperature, get_current_telemetry]
+            value:
+              type: number
+              description: Используется только для команды set_temperature
